@@ -39,6 +39,8 @@ stack.push(1);
 stack.push(null),
 stack.push(NaN);
 
+console.log('<----- Stack ----->');
+
 console.log(stack.storage);
 console.log(stack.length);
 
