@@ -6,6 +6,10 @@ class Queue {
         return !Object.keys(this.storage).length;
     }
 
+    get length() {
+        return Object.keys(this.storage).length;
+    }
+
     constructor() { this.initMethods(); };
 
     initMethods() {
@@ -62,3 +66,5 @@ queue.enqueue(3);
 console.log('STORAGE', queue.storage);
 
 console.log('Is storage empty?', queue.isEmpty);
+
+console.log(queue.length);
