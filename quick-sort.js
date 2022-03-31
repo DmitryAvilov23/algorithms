@@ -5,7 +5,7 @@ function quickSort(array) {
         return array;
     };
 
-    const pivot = array[0];
+    const pivot = array[Math.floor((array.length - 1) / 2)];
     const less = [];
     const greater = [];
 
