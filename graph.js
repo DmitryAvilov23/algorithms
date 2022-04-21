@@ -34,16 +34,15 @@ const users = {
 };
 
 class UsersGraph {
-    #isRecStarted = false;
-
     constructor(users) {
-        this.users = users;
+        this.users  = JSON.parse(JSON.stringify(users));
+        this.matrix = this.getMatrixByUsers();
     }
 
     getMatrixByUsers() {
         const matrix = [];
-        const nodes  = Object.keys(users);
-        const edges  = this.#getEdgesFromUsers(users);
+        const nodes  = Object.keys(this.users);
+        const edges  = this.#getEdgesFromUsers(this.users);
 
         // Creating basic matrix
         for (let i = 0, length = nodes.length; i < length; i++) {
@@ -64,7 +63,7 @@ class UsersGraph {
     }
 
     #getEdgesFromUsers() {
-        const friends = Object.values(users).map((u) => {
+        const friends = Object.values(this.users).map((u) => {
             return u.friends;
         });
         const edges = [];
@@ -88,7 +87,7 @@ class UsersGraph {
             throw new Error('Enter correct friends round');
         };
 
-        const matrix  = this.getMatrixByUsers(this.users);
+        const matrix  = [...this.matrix];
         const friends = [];
 
         // Get first round friends
@@ -120,7 +119,7 @@ class UsersGraph {
     searchByWidth(ctrlUserIndex, callBack) {
         const checked  = [];
         const forCheck = [ctrlUserIndex];
-        const matrix   = this.getMatrixByUsers();
+        const matrix   = [...this.matrix];
 
         while (forCheck.length) {
             const node = forCheck.shift();
@@ -136,12 +135,35 @@ class UsersGraph {
             };
         };
     }
+
+    searchByHeight(ctrlUserIndex, callBack) {
+        const matrix   = [...this.matrix];
+        const checked  = [];
+
+        searchByHeightMaster(ctrlUserIndex);
+
+        function searchByHeightMaster(currentIndex) {
+            checked.push(currentIndex);
+            callBack(currentIndex);
+
+            for (let i = 0, length = matrix[currentIndex].length; i < length; i++) {
+                if (matrix[currentIndex][i] && !checked.includes(i)) {
+                    searchByHeightMaster(i);
+                };
+            };
+        };
+    }
 }
 
 const graph = new UsersGraph(users);
+
 console.log('FIRST ROUND', graph.getFriends(0, 1));
 console.log('SECOND ROUND', graph.getFriends(0, 2));
 
 graph.searchByWidth(4, x => {
-    console.log(x);
+    console.log('SEARCH by WIDTH', x);
+});
+
+graph.searchByHeight(4, x => {
+    console.log('SEARCH by HEIGHT', x);
 });
