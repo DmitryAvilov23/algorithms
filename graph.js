@@ -34,6 +34,8 @@ const users = {
 };
 
 class UsersGraph {
+    #isRecStarted = false;
+
     constructor(users) {
         this.users = users;
     }
@@ -86,10 +88,34 @@ class UsersGraph {
             throw new Error('Enter correct friends round');
         };
 
+        const matrix = this.getMatrixByUsers(this.users);
+        const friends = [];
 
+        for (let i = 0, length = matrix[ctrlUserIndex].length; i < length; i++) {
+            if (matrix[ctrlUserIndex][i]) {
+                friends.push(i);
+            }
+        };
+
+        if (round === 1) {
+            return friends;
+        } else {
+            let friends2 = [];
+    
+            round--;
+
+            for (const friend of friends) {
+                friends2.push(...this.getFriends(friend, round));
+            };
+    
+            friends2 = friends2.filter(f => f !== ctrlUserIndex && !friends.includes(f));
+            friends2 = [...new Set(friends2)];
+    
+            return friends2;
+        }; 
     }
 }
 
 const graph = new UsersGraph(users);
-
-console.log(graph.getFriends(0, 0));
+console.log('FIRST ROUND', graph.getFriends(0, 1));
+console.log('SECOND ROUND', graph.getFriends(0, 2));
