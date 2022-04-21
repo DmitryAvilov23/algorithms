@@ -42,8 +42,8 @@ class UsersGraph {
 
     getMatrixByUsers() {
         const matrix = [];
-        const nodes = Object.keys(users);
-        const edges = this.#getEdgesFromUsers(users);
+        const nodes  = Object.keys(users);
+        const edges  = this.#getEdgesFromUsers(users);
 
         // Creating basic matrix
         for (let i = 0, length = nodes.length; i < length; i++) {
@@ -71,7 +71,7 @@ class UsersGraph {
     
         for (let i = 0, friendsLength = friends.length; i < friendsLength; i++) {
             const userFriends = friends[i];
-            const userEdges = [];
+            const userEdges   = [];
     
             for (let j = 0, userFriendsLength = userFriends.length; j < userFriendsLength; j++) {
                 userEdges.push([i, userFriends[j]]);
@@ -88,15 +88,17 @@ class UsersGraph {
             throw new Error('Enter correct friends round');
         };
 
-        const matrix = this.getMatrixByUsers(this.users);
+        const matrix  = this.getMatrixByUsers(this.users);
         const friends = [];
 
+        // Get first round friends
         for (let i = 0, length = matrix[ctrlUserIndex].length; i < length; i++) {
             if (matrix[ctrlUserIndex][i]) {
                 friends.push(i);
             }
         };
 
+        // Get friends by round
         if (round === 1) {
             return friends;
         } else {
@@ -114,8 +116,32 @@ class UsersGraph {
             return friends2;
         }; 
     }
+
+    searchByWidth(ctrlUserIndex, callBack) {
+        const checked  = [];
+        const forCheck = [ctrlUserIndex];
+        const matrix   = this.getMatrixByUsers();
+
+        while (forCheck.length) {
+            const node = forCheck.shift();
+            checked.push(node);
+            callBack(node);
+
+            for (let i = 0, length = matrix[node].length; i < length; i++) {
+                const friend = matrix[node][i];
+
+                if (friend && !checked.includes(i) && !forCheck.includes(i)) {
+                    forCheck.push(i);
+                }
+            };
+        };
+    }
 }
 
 const graph = new UsersGraph(users);
 console.log('FIRST ROUND', graph.getFriends(0, 1));
 console.log('SECOND ROUND', graph.getFriends(0, 2));
+
+graph.searchByWidth(4, x => {
+    console.log(x);
+});
